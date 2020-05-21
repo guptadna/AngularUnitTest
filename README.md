@@ -42,9 +42,19 @@ mockHeroService = jasmine.createSpyObj(['getHersos', 'addHero', 'deleteHero'])
 ```
 4) Set mock service method to return desired response. HEROS is an Array of object or JSON.
 ```
-mockHeroService.getHeros.and.returnValue(of(HEROS));
+mockHeroService.getHeros.and.returnValue(of(HEROES));
 ```
 5) fixture.detectChanges --> to bind the .ts with template file, internally runs ngOnInit method of a component
 ```
 fixture.detectChanges():
+```
+6) Debug Element - get the hold of html elements -  the Assertion on template/UI
+```
+const heroComponentDEs = fixture.debugElement,.queryAll(By.directive(HeroComponent));
+expect(heroComponentDEs.lenght).toEqual(3);
+
+for(let i =0; i< heroComponentDEs.lenght; i++){
+    expect(heroComponentDEs[i].componentInstance.hero).toEqual(HEROES[i]);
+}
+
 ```
