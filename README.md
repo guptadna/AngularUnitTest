@@ -58,3 +58,6 @@ for(let i =0; i< heroComponentDEs.lenght; i++){
 }
 
 ```
+
+
+httpTestingController is used for handling http service
