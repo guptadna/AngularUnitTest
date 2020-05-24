@@ -66,3 +66,26 @@ httpTestingController is used for handling http service
 ```
 ng test --code-coverage
 ```
+
+
+## Testing Componenet & Dependencies:
+Componenet can be dependent on --> Service
+Componenet can be dependent on --> a child component
+Servcie --> can be dependent on another service
+
+If a service is dependent
+
+```
+  constructor(private http: HttpClient, private authorizationService: AuthorizationService) {
+    this.authorizationService.accessToken().pipe(takeUntil(this.unsubscribe$)).subscribe((accessToken) => this.token = accessToken);
+    this.authorizationService.userInfos().pipe(takeUntil(this.unsubscribe$)).subscribe(user => this.userInfo = user);
+  }
+```
+
+```
+beforeEach(() => TestBed.configureTestingModule({
+    imports: [HttpClientTestingModule],
+    providers: [{ provide: Requestor, useValue: new FetchRequestor() },
+    { provide: AuthorizationService, useClass: MockAuthorizationService }]
+  }));
+```
