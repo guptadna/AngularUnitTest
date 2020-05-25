@@ -97,7 +97,7 @@ beforeEach(() => TestBed.configureTestingModule({
   it('getInRule should return', () => {
     mockPriorBFFService = jasmine.createSpyObj(['getInRule', 'postInRule']);            \\ create mock service
     
-    mockPriorBFFService.getInRule.and.returnValue(of(workItemScoringMockResponse));      \\ set response to receive when getInRule method is called. ```of``` is used to return obeservable.
+    mockPriorBFFService.getInRule.and.returnValue(of(workItemScoringMockResponse));      \\ set response to receive when getInRule method is called. `of` is used to return obeservable.
     
     component = new ConditionsComponent(mockPriorBFFService, snackbar);
     
@@ -106,5 +106,64 @@ beforeEach(() => TestBed.configureTestingModule({
     
     expect(component.inRuleModel.ruleApplication).toEqual('workItemScoring');
   });
+
+ ## Integration Test - Shallow
+
+we will testing only actual component, not its child components and dependencies
+
+##  TestBed - it allows to test both component and template.
+
+  let fixture: ComponentFixture<ConditionsComponent>;
+  let mockPriorBFFService;
+  beforeEach(() => {
+
+    mockPriorBFFService = jasmine.createSpyObj(['getInRule', 'postInRule']);
+    mockPriorBFFService.getInRule.and.returnValue(of(workItemScoringMockResponse));
+
+    TestBed.configureTestingModule({
+      imports: [
+        MaterialModule,
+        FormsModule
+      ],
+      declarations: [ConditionsComponent],
+      providers: [
+        { provide: PriorBFFService, useValue: mockPriorBFFService }
+      ]
+      // schemas: [NO_ERRORS_SCHEMA]
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(ConditionsComponent);
+  });
+
 ```
+
+# Identify the Objects
+
+there are two ways :
+
+1) fixture.nativeElement --> this works on borswer dom properties
+2) fixture.debugElement  --> this works on component template, gets the access to the root element of template. debug element has few more adventages over nativeElement so we should use debugElement. 
+
+Using debugElement we can get hold of directives ( directives are selectors for child componenets) and get hold of directive's Componenet Instance.
+
+```typescript
+  it('should render template', () => {
+  
+    fixture.componentInstance.applicationName = 'WorkItemScoring';
+    
+    fixture.detectChanges();   \\ to bind component with template or to reflect the changes on template
+    
+    expect(fixture.componentInstance).toBeTruthy();
+    expect(fixture.componentInstance.applicationName).toBe('WorkItemScoring');
+
+    expect(fixture.nativeElement.querySelector('h3').textContent).toContain('Work Item Scoring Application');
+    expect(fixture.nativeElement.querySelector('mat-label').textContent).toContain('Task ID');
+
+    expect(fixture.debugElement.queryAll(By.css('button')).length).toBe(1);
+    expect(fixture.debugElement.queryAll(By.css('select')).length).toBe(13);
+    expect(fixture.debugElement.queryAll(By.css('mat-label')).length).toBe(17);
+    expect(fixture.debugElement.queryAll(By.css('mat-label'))[0].nativeElement.textContent).toContain('Task ID');
+  });
+```
+
 
