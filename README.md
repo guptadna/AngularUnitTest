@@ -89,3 +89,22 @@ beforeEach(() => TestBed.configureTestingModule({
     { provide: AuthorizationService, useClass: MockAuthorizationService }]
   }));
 ```
+
+
+## Isolated Test Example:
+
+```typescript
+  it('getInRule should return', () => {
+    mockPriorBFFService = jasmine.createSpyObj(['getInRule', 'postInRule']);            \\ create mock service
+    
+    mockPriorBFFService.getInRule.and.returnValue(of(workItemScoringMockResponse));      \\ set response to receive when getInRule method is called. ```of``` is used to return obeservable.
+    
+    component = new ConditionsComponent(mockPriorBFFService, snackbar);
+    
+    component.applicationName = 'WorkItemScoring';
+    component.ngOnInit();
+    
+    expect(component.inRuleModel.ruleApplication).toEqual('workItemScoring');
+  });
+```
+
