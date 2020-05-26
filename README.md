@@ -165,5 +165,32 @@ Using debugElement we can get hold of directives ( directives are selectors for 
     expect(fixture.debugElement.queryAll(By.css('mat-label'))[0].nativeElement.textContent).toContain('Task ID');
   });
 ```
+## Mock Service 
 
+```typescript
+// set up test bed
+TestBed.configureTestingModule({
+    declarations: [ConditionsComponent],
+    providers: [
+        { provide: PriorBFFService, useValue: mockPriorBFFService }
+    ]
+    }).compileComponents();
+
+// declare methods to be mocked
+mockPriorBFFService = jasmine.createSpyObj(['getInRule', 'postInRule']);
+
+// Configure mehtod to return data when it is called
+mockPriorBFFService.postInRule.and.returnValue(of(JsonResponseData));
+
+spyOn(mockPriorBFFService, 'getInRule').and.returnValue(throwError({ error: { message: 'testing error' } }));
+
+// Configure mehtod to return error when it is called
+mockPriorBFFService.getInRule.and.returnValue(throwError({ error: { message: 'testing error' } })); 
+
+// call ngOnInit()
+fixture.detectChanges();
+
+// verify method has been called
+expect(mockPriorBFFService.getInRule).toHaveBeenCalled();
+```
 
